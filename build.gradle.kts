@@ -1,5 +1,6 @@
 plugins {
   kotlin("jvm") version "2.1.21"
+  id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
   id("org.jetbrains.compose") version "1.8.2"
 }
 
@@ -10,7 +11,7 @@ repositories {
 }
 
 dependencies {
-  implementation("org.jetbrains.compose.desktop:desktop-jvm-windows:1.8.2")
+  implementation(compose.desktop.currentOs)
 }
 
 compose.desktop {
