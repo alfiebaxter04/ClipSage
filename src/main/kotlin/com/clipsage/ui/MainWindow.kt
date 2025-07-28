@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import com.clipsage.core.ClipboardWatcher
 
 @Composable
-fun mainWindow(windowIsOpen: MutableState<Boolean>) = Window(onCloseRequest = { windowIsOpen.value = false },
+fun mainWindow(windowIsOpen: MutableState<Boolean>) = Window(onCloseRequest = {windowIsOpen.value = false },
     title = "Clipsage",
     icon = MyAppIcon,
 ) {
@@ -22,8 +25,14 @@ fun mainWindow(windowIsOpen: MutableState<Boolean>) = Window(onCloseRequest = { 
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val dummyItems = List(10) { ClipboardItem((it+1).toString()) }
-        ClipboardListView(dummyItems)
+        val contents = remember { mutableStateListOf<ClipboardItem>() }
+        val clipboardWatcher = ClipboardWatcher
+        clipboardWatcher.startWatchingClipboard { newContent ->
+            if (newContent.isNotBlank() && !contents.any { it.content == newContent }) {
+                contents.add(ClipboardItem(newContent))
+            }
+        }
+        ClipboardListView(contents)
     }
 }
 
